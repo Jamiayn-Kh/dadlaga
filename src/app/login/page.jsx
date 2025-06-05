@@ -2,21 +2,29 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { login, isAuthenticated } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Хэрэв аль хэдийн нэвтэрсэн бол нүүр хуудас руу шилжүүлэх
+    if (isAuthenticated) {
+      router.push('/');
+      return;
+    }
+
     // Бүртгэлээс ирсэн амжилтын мэдээлэл
     if (searchParams.get('message') === 'registration_success') {
       setSuccess('Амжилттай бүртгэгдлээ! Одоо нэвтэрнэ үү.');
     }
-  }, [searchParams]);
+  }, [searchParams, isAuthenticated, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,21 +33,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (res.ok) {
-        const data = await res.json();
+      const result = await login(form.email, form.password);
+      
+      if (result.success) {
         // Амжилттай нэвтэрсэн бол homepage руу шилжүүлэх
         router.push('/');
       } else {
-        const data = await res.json();
-        setError(data.error || 'Нэвтрэх амжилтгүй.');
+        setError(result.error || 'Нэвтрэх амжилтгүй.');
       }
     } catch (err) {
       setError('Серверийн алдаа гарлаа.');
@@ -115,7 +115,7 @@ export default function LoginPage() {
             {loading ? (
               <div className="flex items-center justify-center">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                Нэвтэрч байна...
+                Нэвтэрж байна...
               </div>
             ) : (
               'Нэвтрэх'

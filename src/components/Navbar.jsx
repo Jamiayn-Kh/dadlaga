@@ -4,8 +4,8 @@ import NavbarItem from './NavbarItem'
 
 export default function Navbar() {
   return (
-    <div className='flex dark:bg-amber-600 bg-amber-200 p-4 lg:text-lg
-    justify-center gap-6'>
+    <div className='flex bg-amber-200 dark:!bg-gray-800 p-4 lg:text-lg
+    justify-center gap-6 transition-colors duration-300'>
         
         <NavbarItem title="Trending" 
         param="fetchTrending"/>

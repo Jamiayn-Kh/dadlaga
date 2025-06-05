@@ -6,6 +6,7 @@ import Header from '@/components/Header'
 import ConditionalLayout from '@/components/ConditionalLayout'
 import Providers from './Providers'
 
+
 const inter = Inter({ subsets: ['latin'] })
 
 export default function RootLayout({ children }) {
@@ -14,8 +15,11 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <Providers>
           <Header />
+          
+          
+          {/* ConditionalLayout нь Header-ийг зарим хуудсанд харуулахгүй */}
           <ConditionalLayout>
-            
+           
             {children}
           </ConditionalLayout>
         </Providers>

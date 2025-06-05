@@ -1,21 +1,24 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/login');
-    } else {
-      setLoading(false);
+    if (!authLoading) {
+      if (!isAuthenticated) {
+        router.push('/login');
+      } else {
+        setLoading(false);
+      }
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, authLoading, router]);
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
@@ -59,11 +62,11 @@ export default function ProfilePage() {
               Бүртгүүлсэн огноо
             </label>
             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-gray-800 dark:text-white">
-              {new Date(user?.created_at).toLocaleDateString('mn-MN', {
+              {user?.created_at ? new Date(user.created_at).toLocaleDateString('mn-MN', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
-              })}
+              }) : 'Мэдээлэл байхгүй'}
             </div>
           </div>
         </div>
@@ -79,4 +82,4 @@ export default function ProfilePage() {
       </div>
     </div>
   );
-} 
+}
