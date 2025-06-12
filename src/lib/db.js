@@ -12,9 +12,9 @@ const client = new Client({
 const connectDB = async () => {
   try {
     await client.connect();
-    console.log("✅ PostgreSQL өгөгдлийн сан руу амжилттай холбогдлоо");
+    console.log("PostgreSQL өгөгдлийн сан руу амжилттай холбогдлоо");
   } catch (err) {
-    console.error("❌ Холболтын алдаа:", err.message);
+    console.error("Холболтын алдаа:", err.message);
     process.exit(1);
   }
 };
