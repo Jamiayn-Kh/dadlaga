@@ -1,4 +1,4 @@
-import client from '@/lib/db';
+import prisma from '@/lib/db';
 import bcrypt from 'bcrypt';
 
 export async function POST(req) {
@@ -29,12 +29,16 @@ export async function POST(req) {
     }
 
     // Хэрэглэгч аль хэдийн байгаа эсэхийг шалгах
-    const existingUser = await client.query(
-      'SELECT id FROM users WHERE email = $1 OR username = $2', 
-      [email, username]
-    );
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email },
+          { username }
+        ]
+      }
+    });
 
-    if (existingUser.rowCount > 0) {
+    if (existingUser) {
       return Response.json(
         { error: 'И-мэйл эсвэл хэрэглэгчийн нэр аль хэдийн ашиглагдаж байна' }, 
         { status: 409 }
@@ -43,21 +47,30 @@ export async function POST(req) {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const result = await client.query(
-      'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, email, created_at',
-      [username, email, hashedPassword]
-    );
+    const newUser = await prisma.user.create({
+      data: {
+        username,
+        email,
+        password: hashedPassword
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        created_at: true
+      }
+    });
 
     return Response.json({ 
       message: 'Амжилттай бүртгэгдлээ',
-      user: result.rows[0] 
+      user: newUser 
     }, { status: 201 });
 
   } catch (err) {
     console.error('Registration error:', err);
     
-    // Database constraint error
-    if (err.code === '23505') {
+    // Prisma unique constraint error
+    if (err.code === 'P2002') {
       return Response.json(
         { error: 'И-мэйл эсвэл хэрэглэгчийн нэр аль хэдийн бүртгэгдсэн байна' }, 
         { status: 409 }
