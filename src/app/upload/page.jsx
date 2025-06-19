@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function UploadPage() {
   const [form, setForm] = useState({
@@ -9,6 +11,28 @@ export default function UploadPage() {
     imagePreview: null,
   });
   const [uploaded, setUploaded] = useState(false);
+  const router = useRouter();
+  const{user, isAuthenticated, loading:authLoading} = useAuth();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if(!authLoading){
+        if(!isAuthenticated){
+            router.push('/login');
+        }
+        else{
+            setLoading(false);
+        }
+    }
+  }, [isAuthenticated, authLoading, router]);
+
+    if (loading || authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
+      </div>
+    );
+  }
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -54,6 +78,8 @@ export default function UploadPage() {
       imagePreview: null,
     });
   };
+
+  
 
   return (
     <div className="max-w-xl mx-auto mt-10 p-6 bg-white rounded shadow">
