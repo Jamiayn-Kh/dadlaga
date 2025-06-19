@@ -3,7 +3,7 @@ import React from 'react'
 import MenuItem from './MenuItem'
 import {AiFillHome} from 'react-icons/ai'
 import {BsFillInfoCircleFill} from 'react-icons/bs'
-import {FaUser, FaSignOutAlt, FaSignInAlt} from 'react-icons/fa'
+import {FaUser, FaSignOutAlt, FaSignInAlt, FaCloudUploadAlt} from 'react-icons/fa'
 import Link from 'next/link';
 import DarkModeSwitch from './DarkModeSwitch';
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,11 +18,16 @@ export default function Header() {
 
   return (
     <div className='flex justify-between items-center p-3 max-w-6xl mx-auto'>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
+           
             <MenuItem title="home" address="/" Icon={AiFillHome}/>
             <MenuItem title="about" address="/about" Icon={BsFillInfoCircleFill}/>
             {isAuthenticated && (
               <MenuItem title="profile" address="/profile" Icon={FaUser}/>
+            )}
+            
+            {isAuthenticated&&(
+              <MenuItem title="my content" address="/upload" Icon={FaCloudUploadAlt}/>
             )}
         </div>
         <div className='flex items-center gap-4'>
@@ -58,12 +63,6 @@ export default function Header() {
                     IMDb
                 </span>
             </Link>
-                  <Link
-        href="/upload"
-        className="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600 transition-colors"
-      >
-        Upload
-      </Link>
         </div>
     </div>
   )
