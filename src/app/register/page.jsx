@@ -59,7 +59,7 @@ export default function RegisterPage() {
         <div className="text-center mb-6">
           <div className="inline-flex items-center gap-2">
             <span className='text-3xl font-bold bg-amber-500 py-2 px-3 rounded-lg text-white'>
-              IMDb
+              PDFviewer
             </span>
           </div>
         </div>

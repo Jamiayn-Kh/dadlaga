@@ -5,13 +5,7 @@ import Header from './Header';
 export default function ConditionalLayout({ children }) {
   const pathname = usePathname();
   
-  // Login болон Register хуудсанд Header-ийг харуулахгүй
-  const shouldHideHeader = pathname === '/login' || pathname === '/register';
-
-  if (shouldHideHeader) {
-    return <>{children}</>;
-  }
-
+  // Бүх хуудсанд Header-ийг харуулах
   return (
     <div className="min-h-screen flex flex-col">
       <Header />

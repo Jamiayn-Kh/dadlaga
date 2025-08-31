@@ -2,12 +2,14 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
+import { FaSearch, FaTimes } from "react-icons/fa";
 
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState([]);
   const [topRatedDocuments, setTopRatedDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showTopRated, setShowTopRated] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -63,6 +65,21 @@ export default function DocumentsPage() {
     }
   };
 
+  // Filter documents based on search term
+  const filteredDocuments = (documents) => {
+    if (!searchTerm.trim()) return documents;
+    
+    return documents.filter(doc => 
+      doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (doc.description && doc.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (doc.originalName && doc.originalName.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  };
+
+  const clearSearch = () => {
+    setSearchTerm("");
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -72,6 +89,7 @@ export default function DocumentsPage() {
   }
 
   const currentDocuments = showTopRated ? topRatedDocuments : documents;
+  const filteredCurrentDocuments = filteredDocuments(currentDocuments);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -113,6 +131,35 @@ export default function DocumentsPage() {
             </div>
           </div>
         </div>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FaSearch className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Баримтын нэрээр хайх..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
+            />
+            {searchTerm && (
+              <button
+                onClick={clearSearch}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                <FaTimes className="h-5 w-5" />
+              </button>
+            )}
+          </div>
+          {searchTerm && (
+            <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              "{searchTerm}" гэсэн {filteredCurrentDocuments.length} баримт олдлоо
+            </div>
+          )}
+        </div>
         
         {!isAuthenticated && (
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-200 px-4 py-3 rounded-lg mb-6">
@@ -138,7 +185,7 @@ export default function DocumentsPage() {
         
         {/* Documents Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {currentDocuments.map((doc) => (
+          {filteredCurrentDocuments.map((doc) => (
             <div key={doc.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-200 dark:border-gray-700 overflow-hidden">
               {/* PDF Thumbnail */}
               <div className="aspect-[3/4] bg-gray-100 dark:bg-gray-700 overflow-hidden">
@@ -189,16 +236,34 @@ export default function DocumentsPage() {
           ))}
         </div>
         
-        {currentDocuments.length === 0 && (
+        {filteredCurrentDocuments.length === 0 && (
           <div className="text-center py-16">
             <div className="text-6xl mb-4">📄</div>
             <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              {showTopRated ? 'Одоогоор уншилтын статистик байхгүй байна' : 'Одоогоор баримт байхгүй байна'}
+              {searchTerm 
+                ? `"${searchTerm}" гэсэн баримт олдсонгүй` 
+                : showTopRated 
+                  ? 'Одоогоор уншилтын статистик байхгүй байна' 
+                  : 'Одоогоор баримт байхгүй байна'
+              }
             </h3>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              {showTopRated ? 'Баримтуудыг уншиж эхлээд статистик харах боломжтой' : 'Эхний баримтаа нэмж эхлээрэй'}
+              {searchTerm 
+                ? 'Өөр нэрээр хайж үзнэ үү' 
+                : showTopRated 
+                  ? 'Баримтуудыг уншиж эхлээд статистик харах боломжтой' 
+                  : 'Эхний баримтаа нэмж эхлээрэй'
+              }
             </p>
-            {user?.role === 'ADMIN' && !showTopRated && (
+            {searchTerm && (
+              <button
+                onClick={clearSearch}
+                className="inline-block bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-all duration-200 font-medium mr-4"
+              >
+                Хайлтыг цэвэрлэх
+              </button>
+            )}
+            {user?.role === 'ADMIN' && !showTopRated && !searchTerm && (
               <Link 
                 href="/upload" 
                 className="inline-block bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-3 rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all duration-200 font-medium"

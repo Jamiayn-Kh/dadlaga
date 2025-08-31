@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import MenuItem from './MenuItem'
 import {AiFillHome} from 'react-icons/ai'
 import {BsFillInfoCircleFill} from 'react-icons/bs'
-import {FaUser, FaSignOutAlt, FaSignInAlt, FaCloudUploadAlt, FaBars, FaTimes} from 'react-icons/fa'
+import {FaUser, FaSignOutAlt, FaCloudUploadAlt, FaBars, FaTimes} from 'react-icons/fa'
 import Link from 'next/link';
 import DarkModeSwitch from './DarkModeSwitch';
 import { useAuth } from '@/contexts/AuthContext';
@@ -50,38 +50,13 @@ export default function Header() {
             )}
           </nav>
 
-          {/* Right side - Auth, Dark Mode & Mobile Menu */}
+          {/* Right side - Dark Mode & Mobile Menu */}
           <div className="flex items-center space-x-4">
             
             {/* Dark Mode Toggle */}
             <div className="block">
               <DarkModeSwitch />
             </div>
-            
-            {/* Authentication */}
-            {isAuthenticated ? (
-              <div className="hidden sm:flex items-center space-x-3">
-                <span className="text-sm text-gray-600 dark:text-gray-300">
-                  Сайн байна уу, {user?.username}
-                </span>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 font-medium"
-                  title="Гарах"
-                >
-                  <FaSignOutAlt />
-                  <span>Гарах</span>
-                </button>
-              </div>
-            ) : (
-              <Link 
-                href="/login" 
-                className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 transition-colors rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 font-medium"
-              >
-                <FaSignInAlt />
-                <span>Нэвтрэх</span>
-              </Link>
-            )}
 
             {/* Mobile menu button */}
             <button
@@ -162,17 +137,6 @@ export default function Header() {
                     Гарах
                   </button>
                 </>
-              )}
-              
-              {!isAuthenticated && (
-                <Link 
-                  href="/login" 
-                  className="flex items-center px-3 py-2 text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-900/20 rounded-lg transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <FaSignInAlt className="mr-3" />
-                  Нэвтрэх
-                </Link>
               )}
             </div>
           </div>
