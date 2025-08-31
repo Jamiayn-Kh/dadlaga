@@ -10,25 +10,59 @@ datasource db {
 }
 
 model User {
-  id           Int             @id @default(autoincrement())
-  username     String          @unique
-  email        String          @unique
+  id           Int            @id @default(autoincrement())
+  username     String         @unique
+  email        String         @unique
   password     String
-  role         String          @default("USER") 
-  created_at   DateTime        @default(now())
-  updated_at   DateTime        @default(now())
+  role         String         @default("USER")
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @default(now())
   watchHistory WatchHistory[]
+  movies       Movie[]        @relation("UserMovies")
+  documents    Document[]     @relation("UserDocuments")
 
-  @@map("users") // Actual table name
+  @@map("users")
 }
 
 model WatchHistory {
   id        Int      @id @default(autoincrement())
   user      User     @relation(fields: [user_id], references: [id])
   user_id   Int
-  movie_id  Int
+  movie     Movie?   @relation(fields: [movie_id], references: [id])
+  movie_id  Int?
+  document  Document? @relation(fields: [document_id], references: [id])
+  document_id Int?
   viewed_at DateTime @default(now())
 
   @@unique([user_id, movie_id])
+  @@unique([user_id, document_id])
   @@map("watch_history") // Actual table name
+}
+
+model Movie {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  poster      String
+  createdBy   Int
+  created_at  DateTime @default(now())
+  User        User     @relation("UserMovies", fields: [createdBy], references: [id])
+  watchHistory WatchHistory[]
+
+  @@map("movies")
+}
+
+model Document {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  url         String    // Public or signed URL of the PDF in S3
+  createdBy   Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @default(now())
+
+  uploader    User      @relation("UserDocuments", fields: [createdBy], references: [id])
+  views       WatchHistory[]
+
+  @@map("documents")
 }

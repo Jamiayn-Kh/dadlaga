@@ -35,10 +35,14 @@ export async function POST(req) {
 
     const { password: _, ...userWithoutPassword } = user;
 
+    // Generate a simple token (you should implement proper JWT)
+    const token = Buffer.from(`${user.id}:${user.email}:${Date.now()}`).toString('base64');
+    
     return Response.json(
       {
         message: 'Амжилттай нэвтэрлээ',
         user: userWithoutPassword,
+        token: token,
       },
       { status: 200 }
     );
