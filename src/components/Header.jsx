@@ -22,18 +22,20 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white dark:bg-gray-900 shadow-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+    <header className="bg-white dark:bg-gray-900 shadow-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           
-          {/* Logo */}
-          <Link href={'/'} className="flex items-center">
-            <span className='text-2xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent'>
-              PDFviewer
-            </span>
-          </Link>
+          {/* Left side - Logo */}
+          <div className="flex items-center">
+            <Link href={'/'} className="flex items-center">
+              <span className='text-2xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent'>
+                PDFviewer
+              </span>
+            </Link>
+          </div>
 
-          {/* Desktop Navigation */}
+          {/* Center - Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <MenuItem title="home" address="/" Icon={AiFillHome}/>
             <MenuItem title="about" address="/about" Icon={BsFillInfoCircleFill}/>
@@ -48,9 +50,13 @@ export default function Header() {
             )}
           </nav>
 
-          {/* Right side - Auth & Dark Mode */}
+          {/* Right side - Auth, Dark Mode & Mobile Menu */}
           <div className="flex items-center space-x-4">
-            <DarkModeSwitch />
+            
+            {/* Dark Mode Toggle */}
+            <div className="block">
+              <DarkModeSwitch />
+            </div>
             
             {/* Authentication */}
             {isAuthenticated ? (
@@ -60,7 +66,7 @@ export default function Header() {
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 font-medium"
                   title="Гарах"
                 >
                   <FaSignOutAlt />
@@ -70,7 +76,7 @@ export default function Header() {
             ) : (
               <Link 
                 href="/login" 
-                className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 transition-colors rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 transition-colors rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/20 font-medium"
               >
                 <FaSignInAlt />
                 <span>Нэвтрэх</span>
@@ -91,6 +97,13 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-200 dark:border-gray-700">
             <div className="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-gray-900">
+              
+              {/* Mobile Dark Mode Toggle */}
+              <div className="px-3 py-2 flex items-center justify-between">
+                <span className="text-gray-600 dark:text-gray-300">Харанхуй горим:</span>
+                <DarkModeSwitch />
+              </div>
+              
               <Link 
                 href="/" 
                 className="flex items-center px-3 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"

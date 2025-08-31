@@ -1,6 +1,6 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import Navbar from './Navbar';
+import Header from './Header';
 
 export default function ConditionalLayout({ children }) {
   const pathname = usePathname();
@@ -13,9 +13,11 @@ export default function ConditionalLayout({ children }) {
   }
 
   return (
-    <main className="max-w-6xl mx-auto">
-      <Navbar />
-      {children}
-    </main>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        {children}
+      </main>
+    </div>
   );
 }
