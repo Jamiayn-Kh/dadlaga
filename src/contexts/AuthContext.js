@@ -21,58 +21,25 @@ export function AuthProvider({ children }) {
         return;
       }
 
-      // Token-оос user мэдээллийг авах (base64 decode)
-      try {
-        const decodedToken = JSON.parse(atob(token));
-        if (decodedToken.user) {
-          setUser(decodedToken.user);
-          setIsAuthenticated(true);
+      // /api/auth/me endpoint-г ашиглан хэрэглэгчийн мэдээллийг авах
+      const res = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-      } catch (e) {
-        console.log('Token decode failed, trying simple token');
-        // Simple token format: id:email:timestamp
-        try {
-          const decoded = atob(token);
-          const [id, email] = decoded.split(':');
-          if (id && email) {
-            // Mock admin user for testing
-            setUser({
-              id: parseInt(id) || 1,
-              username: 'admin',
-              email: email,
-              role: 'ADMIN'
-            });
-            setIsAuthenticated(true);
-          }
-        } catch (e2) {
-          console.log('Simple token decode failed, using mock user');
-          // Mock admin user for testing
-          setUser({
-            id: 1,
-            username: 'admin',
-            email: 'admin@example.com',
-            role: 'ADMIN'
-          });
-          setIsAuthenticated(true);
-        }
-      }
+      });
       
-      // const res = await fetch('/api/auth/me', {
-      //   headers: {
-      //     'Authorization': `Bearer ${token}`
-      //   }
-      // });
-
-      // if (res.ok) {
-      //   const userData = await res.json();
-      //   setUser(userData);
-      //   setIsAuthenticated(true);
-      // } else {
-      //   // Token буруу бол устгах
-      //   localStorage.removeItem('token');
-      //   setUser(null);
-      //   setIsAuthenticated(false);
-      // }
+      if (res.ok) {
+        const userData = await res.json();
+        console.log('User data from API:', userData);
+        setUser(userData);
+        setIsAuthenticated(true);
+      } else {
+        console.log('Auth check failed, removing token');
+        // Token буруу бол устгах
+        localStorage.removeItem('token');
+        setUser(null);
+        setIsAuthenticated(false);
+      }
     } catch (error) {
       console.error('Auth check failed:', error);
       localStorage.removeItem('token');
@@ -94,6 +61,7 @@ export function AuthProvider({ children }) {
 
     if (res.ok) {
       const data = await res.json();
+      console.log('Login response:', data);
       localStorage.setItem('token', data.token);
       setUser(data.user);
       setIsAuthenticated(true);

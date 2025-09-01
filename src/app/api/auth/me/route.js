@@ -10,24 +10,37 @@ export async function GET(req) {
 
     const token = authHeader.substring(7);
     
-    // For now, we'll use a simple approach - you might want to implement proper JWT verification
-    // This is a basic implementation - you should enhance it with proper JWT validation
-    
-    // Check if user exists in database (you might want to store tokens in a separate table)
-    // For now, we'll return a mock response to get the app working
-    
-    // TODO: Implement proper JWT verification
-    // const user = await prisma.user.findFirst({
-    //   where: { /* some token validation logic */ }
-    // });
-    
-    // For now, return a mock user to test the functionality
-    return NextResponse.json({
-      id: 1,
-      username: "admin",
-      email: "admin@example.com",
-      role: "ADMIN"
-    });
+    try {
+      // Token-оос user ID-г авах (base64 decode)
+      const decoded = atob(token);
+      const [userId] = decoded.split(':');
+      
+      if (!userId) {
+        return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+      }
+
+      // Database-аас хэрэглэгчийн мэдээллийг авах
+      const user = await prisma.user.findUnique({
+        where: { id: parseInt(userId) },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          role: true,
+          created_at: true
+        }
+      });
+
+      if (!user) {
+        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      }
+
+      return NextResponse.json(user);
+      
+    } catch (decodeError) {
+      console.error('Token decode error:', decodeError);
+      return NextResponse.json({ error: 'Invalid token format' }, { status: 401 });
+    }
     
   } catch (error) {
     console.error('Auth me error:', error);
