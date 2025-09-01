@@ -3,6 +3,93 @@
 ## 📁 Project Overview
 This is a Next.js PDF viewer application with authentication, file upload, and document management features.
 
+## 🎯 Use Case Diagram
+
+```mermaid
+graph TD
+    %% Actors
+    A[Guest User]
+    B[Regular User]
+    C[Admin User]
+    
+    %% Guest User Use Cases
+    UC1[View Home Page]
+    UC2[View About Page]
+    UC3[Register Account]
+    UC4[Login to System]
+    
+    %% Regular User Use Cases
+    UC5[View Profile]
+    UC6[Browse Documents]
+    UC7[Search Documents]
+    UC8[View PDF Document]
+    UC9[View Document History]
+    UC10[Logout]
+    
+    %% Admin User Use Cases
+    UC11[Upload PDF Files]
+    UC12[Delete Documents]
+    UC13[Manage All Documents]
+    UC14[View User Statistics]
+    UC15[Access Upload Page]
+    
+    %% System Functions
+    UC16[Authenticate User]
+    UC17[Track Document Views]
+    UC18[Store Files in S3]
+    UC19[Generate PDF Thumbnails]
+    UC20[Manage User Sessions]
+    
+    %% Guest User Relationships
+    A --> UC1
+    A --> UC2
+    A --> UC3
+    A --> UC4
+    
+    %% Regular User Relationships
+    B --> UC5
+    B --> UC6
+    B --> UC7
+    B --> UC8
+    B --> UC9
+    B --> UC10
+    
+    %% Admin User Relationships
+    C --> UC11
+    C --> UC12
+    C --> UC13
+    C --> UC14
+    C --> UC15
+    C --> UC5
+    C --> UC6
+    C --> UC7
+    C --> UC8
+    C --> UC9
+    C --> UC10
+    
+    %% Include Relationships
+    UC4 -.-> UC16
+    UC8 -.-> UC17
+    UC11 -.-> UC18
+    UC6 -.-> UC19
+    UC4 -.-> UC20
+    UC10 -.-> UC20
+    
+    %% Extend Relationships
+    UC7 -.-> UC6
+    UC12 -.-> UC13
+    UC15 -.-> UC11
+    
+    %% Styling
+    classDef actor fill:#e3f2fd,stroke:#1565c0,stroke-width:3px
+    classDef useCase fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef system fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    
+    class A,B,C actor
+    class UC1,UC2,UC3,UC4,UC5,UC6,UC7,UC8,UC9,UC10,UC11,UC12,UC13,UC14,UC15 useCase
+    class UC16,UC17,UC18,UC19,UC20 system
+```
+
 ## 🏗️ File Structure Diagram
 
 ```mermaid
@@ -238,5 +325,35 @@ erDiagram
 ## 📊 **User Roles**
 - **ADMIN**: Can upload, delete PDFs, access all features
 - **USER**: Can view PDFs, track viewing history
+
+## 🎯 **Use Case Details**
+
+### 👤 **Guest User (Зочин)**
+- **View Home Page** - Үндсэн хуудас харах
+- **View About Page** - Тухай хуудас харах
+- **Register Account** - Бүртгэл үүсгэх
+- **Login to System** - Системд нэвтрэх
+
+### 👤 **Regular User (Энгийн хэрэглэгч)**
+- **View Profile** - Профайл харах
+- **Browse Documents** - Баримтуудыг харах
+- **Search Documents** - Баримтуудыг хайх
+- **View PDF Document** - PDF баримт харах
+- **View Document History** - Үзсэн баримтуудын түүх
+- **Logout** - Гарах
+
+### 👤 **Admin User (Админ)**
+- **Upload PDF Files** - PDF файл оруулах
+- **Delete Documents** - Баримтуудыг устгах
+- **Manage All Documents** - Бүх баримтуудыг удирдах
+- **View User Statistics** - Хэрэглэгчийн статистик харах
+- **Access Upload Page** - Оруулах хуудас руу хандах
+
+### ⚙️ **System Functions (Системийн функцүүд)**
+- **Authenticate User** - Хэрэглэгчийг баталгаажуулах
+- **Track Document Views** - Баримт харах тоог бүртгэх
+- **Store Files in S3** - Файлуудыг S3-д хадгалах
+- **Generate PDF Thumbnails** - PDF thumbnail үүсгэх
+- **Manage User Sessions** - Хэрэглэгчийн session удирдах
 
 This structure provides a complete PDF viewing system with user authentication, file management, and responsive design.
